@@ -26,5 +26,5 @@ if __name__ == "__main__":
                            action='store_true')
     args = argparser.parse_args()
 
-    ast = parse_file(args.filename, use_cpp=False)
+    ast = parse_file(args.filename, use_cpp=True, cpp_args=r'-Iutils/fake_libc_include')
     ast.show(showcoord=args.coord)

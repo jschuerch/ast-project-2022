@@ -20,7 +20,7 @@ from pycparser import parse_file, c_generator
 def translate_to_c(filename):
     """ Simply use the c_generator module to emit a parsed AST.
     """
-    ast = parse_file(filename, use_cpp=True)
+    ast = parse_file(filename, use_cpp=True, cpp_args=r'-Iutils/fake_libc_include')
     generator = c_generator.CGenerator()
     print(generator.visit(ast))
 

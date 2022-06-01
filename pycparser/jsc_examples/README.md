@@ -8,7 +8,7 @@ Dump ast tree of c-file into a file for debugging (saves file in the same folder
 python3 bug_injection/ast_dump.py <filename>
 ```
 
-## simple malloc bug:
+## simple **malloc** bug:
 ```
 # Inject bug
 python3 bug_injection/inject_bugs.py jsc_examples/simple_malloc.c
@@ -28,7 +28,7 @@ Aborted
 ```
 
 
-## scanf read number from file bug:
+## **scanf** read number from file bug:
 ```
 # Inject bug
 python3 bug_injection/inject_bugs.py jsc_examples/scanf.c

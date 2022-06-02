@@ -2,6 +2,10 @@
 
 This is the repository for the project of the ETH course Automated Software Testing by Jennifer Schürch and Johan Stettler. 
 
+1. [Bug injection](##-Bug-injection)
+2. [AFL++-evaluation](##-AFL++-evaluation)
+2. [Additional Comments](##-Additional-Comments)
+
 ## Bug injection
 
 To inject bugs into arbitrary c programs, we used pycparser (https://github.com/eliben/pycparser) to parse the c code into a abstract syntax tree (AST). All of the following commands in this subsection should be run in the pycparser root folder
@@ -19,7 +23,7 @@ python3 bug_injection/ast_dump.py <filename>
 Here are some examples of injecting bugs into programs.
 In case you only want to inject specific bugs, there is a 
 
-## Replace all **malloc** occurances with a constant:
+### Replace all **malloc** occurances with a constant:
 ```
 # Inject bug
 python3 bug_injection/inject_bugs.py jsc_examples/simple_malloc.c
@@ -39,7 +43,7 @@ Aborted
 ```
 
 
-## **scanf** read number from file bug:
+### **scanf** read number from file bug:
 ```
 # Inject bug
 python3 bug_injection/inject_bugs.py jsc_examples/scanf.c
@@ -55,3 +59,10 @@ gcc scanf_buggy.c -o scanf_buggy.out
 b.txt contains numbers
 
 a.txt contains strings
+
+
+## AFL++ evaluation
+
+
+## Additional Comments
+

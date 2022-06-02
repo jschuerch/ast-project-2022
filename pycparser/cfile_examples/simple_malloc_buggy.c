@@ -6,15 +6,8 @@ int main(int argc, char *argv[])
   int i;
   int *ptr;
   int sum = 0;
-  if (argc > 1)
-  {
-    n = atoi(argv[1]);
-    printf("n = %d \n", n);
-  }
-  else
-  {
-    n = 10;
-  }
+  scanf("%d", &n);
+  printf("n = %d \n", n);
   ptr = malloc(1123423758);
   ptr = (int *) malloc(1123423758);
   if (ptr == 0)

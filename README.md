@@ -2,9 +2,9 @@
 
 This is the repository for the project of the ETH course Automated Software Testing by Jennifer Schürch and Johan Stettler. 
 
-1. [Bug injection](##-Bug-injection)
-2. [AFL++-evaluation](##-AFL++-evaluation)
-2. [Additional Comments](##-Additional-Comments)
+1. [Bug injection](#bug-injection)
+2. [AFL++-evaluation](#afl-evaluation)
+2. [Additional Comments](#additional-comments)
 
 ## Bug injection
 

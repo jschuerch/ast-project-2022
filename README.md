@@ -26,14 +26,14 @@ In case you only want to inject specific bugs, there is a
 ### Replace all **malloc** occurances with a constant:
 ```
 # Inject bug
-python3 bug_injection/inject_bugs.py jsc_examples/simple_malloc.c
+python3 bug_injection/inject_bugs.py cfile_examples/simple_malloc.c
 
 # Trigger bug
-gcc jsc_examples/simple_malloc_buggy.c -o jsc_examples/simple_malloc_buggy.out
-./jsc_examples/simple_malloc_buggy.out 1123423758
+gcc cfile_examples/simple_malloc_buggy.c -o cfile_examples/simple_malloc_buggy.out
+./cfile_examples/simple_malloc_buggy.out 1123423758
 
 # Non-triggering input
-./jsc_examples/simple_malloc_buggy.out 100
+./cfile_examples/simple_malloc_buggy.out 100
 
 ```
 *Problem: if there is no print statement before the malloc and we try to run the code, we get the following error for all inputs, which makes it a trivial error*
@@ -46,7 +46,7 @@ Aborted
 ### **scanf** read number from file bug:
 ```
 # Inject bug
-python3 bug_injection/inject_bugs.py jsc_examples/scanf.c
+python3 bug_injection/inject_bugs.py cfile_examples/scanf.c
 
 # Trigger bug
 gcc scanf_buggy.c -o scanf_buggy.out

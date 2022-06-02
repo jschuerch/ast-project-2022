@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
   {
     n = 10;
   }
-  ptr = malloc(10);
-  ptr = (int *) malloc(10);
+  ptr = malloc(1123423758);
+  ptr = (int *) malloc(1123423758);
   if (ptr == 0)
   {
     printf("Error! memory not allocated.");

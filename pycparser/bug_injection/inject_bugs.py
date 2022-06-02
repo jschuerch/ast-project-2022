@@ -4,7 +4,7 @@ import sys
 
 # specify which bugs to try to inject
 BUG = {
-  "malloc": True,
+  "malloc_const": True,
   "scanf_num": True,
   "other bugs..": True,
 }
@@ -45,8 +45,8 @@ def found_assignment(_item):
 
 def function_call(_item):
     global bug_injected
-    if (_item.name.name == "malloc" and BUG["malloc"]): # not sophisticated enough
-        _item.args.exprs = [c_ast.Constant('int', '10')]
+    if (_item.name.name == "malloc" and BUG["malloc_const"]): # not sophisticated enough
+        _item.args.exprs = [c_ast.Constant('int', '1123423758')]
         bug_injected = True
     if (_item.name.name == "fscanf"): # fscanf(fp, "%d", b);
         if (isinstance(_item.args.exprs[1], c_ast.Constant) 

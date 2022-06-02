@@ -81,10 +81,21 @@ Run the following command before running afl:
 
 Each buggy program has its own folder in ast-project-2022/afl-evaluation/
 
+Run afl fuzzer:
+```
+cd ast-project-2022/afl-evaluation/<program folder>
 
-```
-cd ast-project-2022/afl-evaluation/
-```
+CC=afl-clang-fast AFL_HARDEN=1 make
+
+# Read input from stdin:
+afl-fuzz -i in/ -o out ./<program>
+
+# Read input from file as 1st argument:
+afl-fuzz -i in/ -o out ./<program> @@
+``` 
+
+The following programs need files as inputs:
+- 02_scanf
 
 <br/>
 

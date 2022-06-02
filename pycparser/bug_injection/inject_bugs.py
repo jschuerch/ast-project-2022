@@ -63,7 +63,7 @@ def function_call(_item):
     
 
 def insert_bug(filename):
-    print(filename)
+    print("injecting bugs to %s" % filename)
     ast = parse_file(filename, use_cpp=True, cpp_args=r'-Iutils/fake_libc_include')
     
     ast_out = c_ast.FileAST([])
@@ -80,25 +80,41 @@ def insert_bug(filename):
 
     if (bug_injected == False):
         print("no bugs injected!")
+    else:
+        # write buggy code to file
+        generator = c_generator.CGenerator()
 
-    # write buggy code to file
-    generator = c_generator.CGenerator()
+        include_string = ""
+        f = open(filename, "r")
+        for line in f.readlines():
+            line = line.strip()
+            if (line.startswith("#include")):
+                include_string += line + "\n"
 
-    include_string = ""
-    f = open(filename, "r")
-    for line in f.readlines():
-        line = line.strip()
-        if (line.startswith("#include")):
-            include_string += line + "\n"
-
-    out_filename = filename[:-2] + "_buggy.c"
-    f = open(out_filename, "w")
-    f.write(include_string)
-    f.write(generator.visit(ast_out))
-    f.close()
+        out_filename = filename[:-2] + "_buggy.c"
+        f = open(out_filename, "w")
+        f.write(include_string)
+        f.write(generator.visit(ast_out))
+        f.close()
+        print("Buggy program: %s" % out_filename)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        insert_bug(sys.argv[1])
+        key_found = True
+        if len(sys.argv) == 3:
+            key_found = False
+            for b in BUG:
+                if sys.argv[2] == b:
+                    key_found = True
+                    BUG[b] = True
+                else:
+                    BUG[b] = False
+        if not key_found:
+            print("bug type '%s' is not supported! Please choose one of the following:" % sys.argv[2])
+            for b in BUG:
+                print("'%s', " % b, end="")
+            print()
+        else:
+            insert_bug(sys.argv[1])
     else:
         print("Please provide a filename as argument")

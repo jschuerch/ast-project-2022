@@ -63,6 +63,9 @@ a.txt contains strings
 
 ## AFL++ evaluation
 
+To set up the AFL++ environemnt, follow the instructions given here in the afl-training github project: https://github.com/mykter/afl-training/tree/main/quickstart
+
+Each program has its own input and output folders
 
 ## Additional Comments
 

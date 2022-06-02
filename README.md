@@ -6,6 +6,8 @@ This is the repository for the project of the ETH course Automated Software Test
 2. [AFL++-evaluation](#afl-evaluation)
 2. [Additional Comments](#additional-comments)
 
+<br/>
+
 ## Bug injection
 
 To inject bugs into arbitrary c programs, we used pycparser (https://github.com/eliben/pycparser) to parse the c code into a abstract syntax tree (AST). All of the following commands in this subsection should be run in the pycparser root folder
@@ -23,6 +25,8 @@ python3 bug_injection/ast_dump.py <filename>
 Here are some examples of injecting bugs into programs.
 In case you only want to inject specific bugs, there is a 
 
+<br/>
+
 ### Replace all **malloc** occurances with a constant:
 ```
 # Inject bug
@@ -30,18 +34,22 @@ python3 bug_injection/inject_bugs.py cfile_examples/simple_malloc.c
 
 # Trigger bug
 gcc cfile_examples/simple_malloc_buggy.c -o cfile_examples/simple_malloc_buggy.out
-./cfile_examples/simple_malloc_buggy.out 1123423758
+./cfile_examples/simple_malloc_buggy.out
+>> user input: 1123423758
 
 # Non-triggering input
-./cfile_examples/simple_malloc_buggy.out 100
+./cfile_examples/simple_malloc_buggy.out 
+>> user input: 100
 
 ```
-*Problem: if there is no print statement before the malloc and we try to run the code, we get the following error for all inputs, which makes it a trivial error*
+
+*Minor Problem: if there is no print statement before the malloc and we try to run the code, we get the following error for all inputs, which makes it a trivial error. However, we can simply insert a print statement at the beginning of the execution to circumvent this problem*
 ```
 malloc(): corrupted top size
 Aborted
 ```
 
+<br/>
 
 ### **scanf** read number from file bug:
 ```
@@ -60,12 +68,25 @@ b.txt contains numbers
 
 a.txt contains strings
 
+<br/>
 
 ## AFL++ evaluation
 
 To set up the AFL++ environemnt, follow the instructions given here in the afl-training github project: https://github.com/mykter/afl-training/tree/main/quickstart
 
-Each program has its own input and output folders
+Run the following command before running afl:
+```
+~/AFLplusplus/afl-system-config
+```
+
+Each buggy program has its own folder in ast-project-2022/afl-evaluation/
+
+
+```
+cd ast-project-2022/afl-evaluation/
+```
+
+<br/>
 
 ## Additional Comments
 

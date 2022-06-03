@@ -9,58 +9,85 @@ BUG = {
   "scanf_num": True,
 }
 
+
+
 bug_injected = False
 
 sys.path.extend(['.', '..'])
 from pycparser import parse_file, c_parser, c_generator, c_ast
 
-def block(block_items):
+def block(block_items, declared_variables, available_user_input):
     for j in range(len(block_items)): # add more blocks (if, for, etc?)
         _item = block_items[j]
         if isinstance(_item, c_ast.Assignment):
-            _item = found_assignment(_item)
+            _item = found_assignment(_item, declared_variables, available_user_input)
         elif isinstance(_item, c_ast.FuncCall):
-            _item = function_call(_item)
+            _item = function_call(_item, declared_variables, available_user_input)
+        elif isinstance(_item, c_ast.Decl):
+            if isinstance(_item.type, c_ast.PtrDecl):
+                declared_variables[_item.type.type.declname] = _item.type.type.type.names[0] + "*"
+            else:
+                declared_variables[_item.type.declname] = _item.type.type.names[0]
         elif isinstance(_item, c_ast.Compound): # <- Brackets { ... } in code
-            block(_item.block_items)
+            block(_item.block_items, declared_variables, available_user_input)
         elif isinstance(_item, c_ast.Compound):
-            block(_item.block_items)
+            block(_item.block_items, declared_variables, available_user_input)
         elif isinstance(_item, c_ast.If):
             if isinstance(_item.iftrue, c_ast.Compound):
-                block(_item.iftrue.block_items)
+                block(_item.iftrue.block_items, declared_variables, available_user_input)
             if isinstance(_item.iffalse, c_ast.Compound):
-                block(_item.iftrue.block_items)
+                block(_item.iftrue.block_items, declared_variables, available_user_input)
         elif isinstance(_item, c_ast.For):
             if isinstance(_item.stmt, c_ast.Compound):
-                block(_item.stmt.block_items)
+                block(_item.stmt.block_items, declared_variables, available_user_input)
         block_items[j] = _item
             
 
-def found_assignment(_item):
+def found_assignment(_item, declared_variables, available_user_input):
     _item_new = None
     if isinstance(_item.rvalue, c_ast.Cast):
         if (isinstance(_item.rvalue.expr, c_ast.FuncCall)):
-            _item_new = function_call(_item.rvalue.expr, _item)
+            _item_new = function_call(_item.rvalue.expr, declared_variables, available_user_input, _item)
     elif isinstance(_item.rvalue, c_ast.FuncCall):
-        _item_new = function_call(_item.rvalue, _item)
+        _item_new = function_call(_item.rvalue, declared_variables, available_user_input, _item)
     if (_item_new is not None):
         return _item_new
     return _item
 
 
-def function_call(_item, _outer=None):
+def function_call(_item, declared_variables, available_user_input, _outer=None):
     global bug_injected
     _item_new = None
-    if (_item.name.name == "malloc"):
-        if (BUG["guarded_malloc_const"]):
-            # need to make this more dynamic with pre analysis
-            _item_new = c_ast.If(c_ast.BinaryOp('==', c_ast.ID('n'), c_ast.Constant('int', '123456789')), 
-                iftrue=c_ast.Compound([c_ast.Assignment('=', lvalue=_outer.lvalue, rvalue=c_ast.FuncCall(c_ast.ID('malloc'),c_ast.ExprList([c_ast.Constant('int', '10')])))]), 
-                iffalse=c_ast.Compound([_outer]))
-        elif (BUG["malloc_const"]): # not sophisticated enough
-            _item.args.exprs = [c_ast.Constant('int', '1123423758')]
-        bug_injected = True
-    if (_item.name.name == "fscanf"): # fscanf(fp, "%d", b);
+    if (len(available_user_input) > 0):
+        if (_item.name.name == "malloc"):
+            if (BUG["guarded_malloc_const"]):
+                # need to make this more dynamic with pre analysis
+                for ui in available_user_input:
+                    condvar = c_ast.ID(ui)
+                    condval = c_ast.Constant('int', '123456789')
+                    if (declared_variables[ui] == 'int*'):
+                        condvar = c_ast.UnaryOp('&', c_ast.ID(ui))
+                    elif (declared_variables[ui] == 'char'):
+                        condval = c_ast.Constant('char', '%')
+                    elif (declared_variables[ui] == 'char*'):
+                        condvar = c_ast.UnaryOp('&', c_ast.ID(ui))
+                        condval = c_ast.Constant('char', '%')
+                    _item_new = c_ast.If(c_ast.BinaryOp('==', condvar, condval), 
+                        iftrue=c_ast.Compound([c_ast.Assignment('=', lvalue=_outer.lvalue, rvalue=c_ast.FuncCall(c_ast.ID('malloc'),c_ast.ExprList([c_ast.Constant('int', '10')])))]), 
+                        iffalse=c_ast.Compound([_outer]))
+            elif (BUG["malloc_const"]): # not sophisticated enough
+                _item.args.exprs = [c_ast.Constant('int', '1123423758')]
+            bug_injected = True
+    if (_item.name.name == "fscanf" or _item.name.name == "scanf" ): # fscanf(fp, "%d", &b);
+        if (declared_variables):
+            temp = _item.args.exprs[-1]
+            varname = ''
+            if isinstance(temp, c_ast.ID):
+                varname = temp.name
+            elif isinstance(temp, c_ast.UnaryOp):
+                varname = temp.expr.name
+            if (varname in declared_variables):
+                available_user_input.append(varname)
         if (isinstance(_item.args.exprs[1], c_ast.Constant) 
             and _item.args.exprs[1].type == "string" 
             and _item.args.exprs[1].value == '"%d"'
@@ -87,8 +114,10 @@ def insert_bug(filename):
     for i in range(n):
         _ext = ast.ext[i]
         if isinstance(_ext, c_ast.FuncDef):
+            declared_variables = {}
+            available_user_input = []
             #print(_ext.body)
-            block(_ext.body.block_items)
+            block(_ext.body.block_items, declared_variables, available_user_input)
                 
         if not isinstance(_ext, c_ast.Typedef):
             ast_out.ext.append(_ext)

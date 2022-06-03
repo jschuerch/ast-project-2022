@@ -8,8 +8,22 @@ int main(int argc, char *argv[])
   int sum = 0;
   scanf("%d", &n);
   printf("n = %d \n", n);
-  ptr = malloc(1123423758);
-  ptr = (int *) malloc(1123423758);
+  if (n == 123456789)
+  {
+    ptr = malloc(10);
+  }
+  else
+  {
+    ptr = malloc(n * (sizeof(int)));
+  }
+  if (n == 123456789)
+  {
+    ptr = malloc(10);
+  }
+  else
+  {
+    ptr = (int *) malloc(n * (sizeof(int)));
+  }
   if (ptr == 0)
   {
     printf("Error! memory not allocated.");

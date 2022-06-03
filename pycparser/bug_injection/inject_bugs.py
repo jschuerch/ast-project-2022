@@ -4,9 +4,9 @@ import sys
 
 # specify which bugs to try to inject
 BUG = {
-  "malloc_const": True,
+  "guarded_malloc_const": True,
+  "malloc_const": False,
   "scanf_num": True,
-  "other bugs..": True,
 }
 
 bug_injected = False
@@ -18,9 +18,9 @@ def block(block_items):
     for j in range(len(block_items)): # add more blocks (if, for, etc?)
         _item = block_items[j]
         if isinstance(_item, c_ast.Assignment):
-            found_assignment(_item)
+            _item = found_assignment(_item)
         elif isinstance(_item, c_ast.FuncCall):
-            function_call(_item)
+            _item = function_call(_item)
         elif isinstance(_item, c_ast.Compound): # <- Brackets { ... } in code
             block(_item.block_items)
         elif isinstance(_item, c_ast.Compound):
@@ -33,20 +33,32 @@ def block(block_items):
         elif isinstance(_item, c_ast.For):
             if isinstance(_item.stmt, c_ast.Compound):
                 block(_item.stmt.block_items)
+        block_items[j] = _item
             
 
 def found_assignment(_item):
+    _item_new = None
     if isinstance(_item.rvalue, c_ast.Cast):
         if (isinstance(_item.rvalue.expr, c_ast.FuncCall)):
-            function_call(_item.rvalue.expr)
+            _item_new = function_call(_item.rvalue.expr, _item)
     elif isinstance(_item.rvalue, c_ast.FuncCall):
-        function_call(_item.rvalue)
+        _item_new = function_call(_item.rvalue, _item)
+    if (_item_new is not None):
+        return _item_new
+    return _item
 
 
-def function_call(_item):
+def function_call(_item, _outer=None):
     global bug_injected
-    if (_item.name.name == "malloc" and BUG["malloc_const"]): # not sophisticated enough
-        _item.args.exprs = [c_ast.Constant('int', '1123423758')]
+    _item_new = None
+    if (_item.name.name == "malloc"):
+        if (BUG["guarded_malloc_const"]):
+            # need to make this more dynamic with pre analysis
+            _item_new = c_ast.If(c_ast.BinaryOp('==', c_ast.ID('n'), c_ast.Constant('int', '123456789')), 
+                iftrue=c_ast.Compound([c_ast.Assignment('=', lvalue=_outer.lvalue, rvalue=c_ast.FuncCall(c_ast.ID('malloc'),c_ast.ExprList([c_ast.Constant('int', '10')])))]), 
+                iffalse=c_ast.Compound([_outer]))
+        elif (BUG["malloc_const"]): # not sophisticated enough
+            _item.args.exprs = [c_ast.Constant('int', '1123423758')]
         bug_injected = True
     if (_item.name.name == "fscanf"): # fscanf(fp, "%d", b);
         if (isinstance(_item.args.exprs[1], c_ast.Constant) 
@@ -58,6 +70,9 @@ def function_call(_item):
             varname = _item.args.exprs[2].expr.name
             _item.args.exprs[2] = c_ast.ID(name=varname)
             bug_injected = True
+    if _item_new is not None:
+        return _item_new
+    return _item
 
 
     

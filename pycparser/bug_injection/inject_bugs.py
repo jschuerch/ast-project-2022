@@ -61,7 +61,6 @@ def function_call(_item, declared_variables, available_user_input, _outer=None):
     if (len(available_user_input) > 0):
         if (_item.name.name == "malloc"):
             if (BUG["guarded_malloc_const"]):
-                # need to make this more dynamic with pre analysis
                 for ui in available_user_input:
                     condvar = c_ast.ID(ui)
                     condval = c_ast.Constant('int', '123456789')

@@ -22,10 +22,10 @@ Dump ast tree of c-file into a file for debugging (saves file in the same folder
 python3 bug_injection/ast_dump.py <filename>
 ```
 
-Here are some examples of injecting bugs into programs.
-In case you only want to inject specific bugs, there is a 
-
 <br/>
+
+Here are some examples of injecting bugs into programs.
+
 
 ### Replace all **malloc** occurances with a constant:
 ```
@@ -67,6 +67,16 @@ gcc scanf_buggy.c -o scanf_buggy.out
 b.txt contains numbers
 
 a.txt contains strings
+
+<br/>
+
+By default it tries to add all implemented bug types. 
+However, if you only want to inject specific bugs, there is an additional parameter that to specify which bug. 
+Currently we only support specifying 1 bug type. 
+```
+python3 bug_injection/inject_bugs.py <filename> <optional bug type>
+```
+Some supported bugtypes are: guarded_malloc_const, malloc_const, scanf_num 
 
 <br/>
 

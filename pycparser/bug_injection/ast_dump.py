@@ -4,7 +4,7 @@ sys.path.extend(['.', '..'])
 from pycparser import parse_file, c_parser, c_generator, c_ast
 
 def insert_bug(filename):
-    print(filename)
+    print("creating AST dump for: %s" % filename)
     ast = parse_file(filename, use_cpp=True, cpp_args=r'-Iutils/fake_libc_include')
     
     ast_out = c_ast.FileAST([])
@@ -20,6 +20,7 @@ def insert_bug(filename):
     f = open(out_filename, "w")
     f.write(str(ast_out))
     f.close()
+    print("AST written to: %s" % out_filename)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

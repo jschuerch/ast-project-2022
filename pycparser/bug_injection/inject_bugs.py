@@ -119,6 +119,8 @@ def function_call(_item, declared_variables, available_user_input, _outer=None):
 
     if _item_new is not None:
         return _item_new
+    if _outer is not None:
+        return _outer
     return _item
 
 

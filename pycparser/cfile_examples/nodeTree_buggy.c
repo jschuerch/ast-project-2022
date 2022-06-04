@@ -27,7 +27,7 @@ int main(int arg, char **argv)
       if ((*c->buff) == 'L')
       {
         *c->buff = 'R';
-        malloc(sizeof(struct node));
+        (*c).left = malloc(sizeof(struct node));
         (*(*c).left).p = c;
         if (count == 27)
         {
@@ -42,7 +42,7 @@ int main(int arg, char **argv)
         if ((*c->buff) == 'R')
       {
         *c->buff = 'X';
-        malloc(sizeof(struct node));
+        (*c).right = malloc(sizeof(struct node));
         (*(*c).right).p = c;
         if (count == 27)
         {

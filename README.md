@@ -80,6 +80,24 @@ Some supported bugtypes are: guarded_malloc_const, malloc_const, scanf_num
 
 <br/>
 
+### Corrupt **fgets** size:
+```
+# Inject bug
+python3 bug_injection/inject_bugs.py cfile_examples/nodeTree.c fgets_add
+
+# Trigger bug
+gcc cfile_examples/nodeTreec_buggy.c -o cfile_examples/nodeTree_buggy.out
+./cfile_examples/nodeTree_buggy.out
+>> user input: 0000000000000000000000000000000000000000000000000000000000000000
+
+# Non-triggering input
+./cfile_examples/nodeTree_buggy.out 
+>> user input: 123
+
+```
+
+<br/>
+
 ## AFL++ evaluation
 
 To set up the AFL++ environemnt, follow the instructions given here in the afl-training github project: https://github.com/mykter/afl-training/tree/main/quickstart

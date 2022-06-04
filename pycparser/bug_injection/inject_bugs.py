@@ -25,21 +25,31 @@ def block(block_items, declared_variables, available_user_input):
             _item = function_call(_item, declared_variables, available_user_input)
         elif isinstance(_item, c_ast.Decl):
             if isinstance(_item.type, c_ast.PtrDecl):
-                declared_variables[_item.type.type.declname] = _item.type.type.type.names[0] + "*"
+                if isinstance(_item.type.type.type, c_ast.IdentifierType):
+                    declared_variables[_item.type.type.declname] = _item.type.type.type.names[0] + "*"
+                if isinstance(_item.type.type.type, c_ast.Struct):
+                    declared_variables[_item.type.type.declname] = "struct " + _item.type.type.type.name + "*"
             else:
-                declared_variables[_item.type.declname] = _item.type.type.names[0]
+                if isinstance(_item.type.type, c_ast.IdentifierType):
+                    declared_variables[_item.type.declname] = _item.type.type.names[0]
         elif isinstance(_item, c_ast.Compound): # <- Brackets { ... } in code
             block(_item.block_items, declared_variables, available_user_input)
         elif isinstance(_item, c_ast.Compound):
             block(_item.block_items, declared_variables, available_user_input)
         elif isinstance(_item, c_ast.If):
+            print("found if")
             if isinstance(_item.iftrue, c_ast.Compound):
                 block(_item.iftrue.block_items, declared_variables, available_user_input)
             if isinstance(_item.iffalse, c_ast.Compound):
                 block(_item.iftrue.block_items, declared_variables, available_user_input)
-        elif isinstance(_item, c_ast.For):
+        elif isinstance(_item, c_ast.For) or isinstance(_item, c_ast.While):
             if isinstance(_item.stmt, c_ast.Compound):
                 block(_item.stmt.block_items, declared_variables, available_user_input)
+        elif isinstance(_item, c_ast.UnaryOp):
+            pass # do nothing for now
+        else:
+            print("Type %s not supported yet" % type(_item))
+            print(_item)
         block_items[j] = _item
             
 
@@ -74,9 +84,10 @@ def function_call(_item, declared_variables, available_user_input, _outer=None):
                     _item_new = c_ast.If(c_ast.BinaryOp('==', condvar, condval), 
                         iftrue=c_ast.Compound([c_ast.Assignment('=', lvalue=_outer.lvalue, rvalue=c_ast.FuncCall(c_ast.ID('malloc'),c_ast.ExprList([c_ast.Constant('int', '10')])))]), 
                         iffalse=c_ast.Compound([_outer]))
+                bug_injected = True
             elif (BUG["malloc_const"]): # not sophisticated enough
                 _item.args.exprs = [c_ast.Constant('int', '1123423758')]
-            bug_injected = True
+                bug_injected = True
     if (_item.name.name == "fscanf" or _item.name.name == "scanf" ): # fscanf(fp, "%d", &b);
         if (declared_variables):
             temp = _item.args.exprs[-1]

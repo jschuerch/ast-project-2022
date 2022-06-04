@@ -7,6 +7,7 @@ BUG = {
   "guarded_malloc_const": True,
   "malloc_const": False,
   "scanf_num": True,
+  "fgets_add": True,
 }
 
 
@@ -39,8 +40,12 @@ def block(block_items, declared_variables, available_user_input):
         elif isinstance(_item, c_ast.If):
             if isinstance(_item.iftrue, c_ast.Compound):
                 block(_item.iftrue.block_items, declared_variables, available_user_input)
+            elif _item.iftrue:
+                block([_item.iftrue], declared_variables, available_user_input)
             if isinstance(_item.iffalse, c_ast.Compound):
-                block(_item.iftrue.block_items, declared_variables, available_user_input)
+                block(_item.iffalse.block_items, declared_variables, available_user_input)
+            elif _item.iffalse:
+                block([_item.iffalse], declared_variables, available_user_input)
         elif isinstance(_item, c_ast.For) or isinstance(_item, c_ast.While):
             if isinstance(_item.stmt, c_ast.Compound):
                 block(_item.stmt.block_items, declared_variables, available_user_input)
@@ -106,6 +111,12 @@ def function_call(_item, declared_variables, available_user_input, _outer=None):
             varname = _item.args.exprs[2].expr.name
             _item.args.exprs[2] = c_ast.ID(name=varname)
             bug_injected = True
+    if (_item.name.name == "fgets"):
+        if (BUG["fgets_add"]):
+            fgetsvar = _item.args.exprs[0]
+            _item.args.exprs[1] = c_ast.BinaryOp('+', c_ast.UnaryOp('sizeof', fgetsvar), c_ast.Constant('int', '100'))
+            bug_injected = True
+
     if _item_new is not None:
         return _item_new
     return _item

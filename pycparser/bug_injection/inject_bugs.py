@@ -37,7 +37,6 @@ def block(block_items, declared_variables, available_user_input):
         elif isinstance(_item, c_ast.Compound):
             block(_item.block_items, declared_variables, available_user_input)
         elif isinstance(_item, c_ast.If):
-            print("found if")
             if isinstance(_item.iftrue, c_ast.Compound):
                 block(_item.iftrue.block_items, declared_variables, available_user_input)
             if isinstance(_item.iffalse, c_ast.Compound):

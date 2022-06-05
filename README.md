@@ -107,22 +107,19 @@ Run the following command before running afl:
 ~/AFLplusplus/afl-system-config
 ```
 
-Each buggy program has its own folder in ast-project-2022/afl-evaluation/
+In the folder ast-project-2022/afl-evaluation/ we provide some example buggy programs we used to evaluate AFL++. Each buggy program has its own folder including the program itself, the makefile and the input folder used by AFL++.
 
-Run afl fuzzer:
+To run the afl fuzzer on the provided examples use the following commands:
 ```
 cd ast-project-2022/afl-evaluation/<program folder>
 
 CC=afl-clang-fast AFL_HARDEN=1 make
 
-# Read input from stdin:
+# Read input from stdin (for example 01_simple_malloc):
 afl-fuzz -i in/ -o out ./<program>
 
-# Read input from file as 1st argument:
+# Read input from file as 1st argument (for example 02_scanf):
 afl-fuzz -i in/ -o out ./<program> @@
 ``` 
-
-The following programs need files as inputs:
-- 02_scanf
 
 <br/>

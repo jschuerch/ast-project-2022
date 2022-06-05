@@ -57,26 +57,16 @@ Aborted
 python3 bug_injection/inject_bugs.py cfile_examples/scanf.c
 
 # Trigger bug
-gcc scanf_buggy.c -o scanf_buggy.out
-./scanf_buggy.out in/b.txt 
+gcc bug_injection/scanf_buggy.c -o bug_injection/scanf_buggy.out
+./bug_injection/scanf_buggy.out bug_injection/in/b.txt 
 
 # Non-triggering input
-./scanf_buggy.out in/a.txt
+./bug_injection/scanf_buggy.out bug_injection/in/a.txt
 
 ```
 b.txt contains numbers
 
 a.txt contains strings
-
-<br/>
-
-By default it tries to add all implemented bug types. 
-However, if you only want to inject specific bugs, there is an additional parameter that to specify which bug. 
-Currently we only support specifying 1 bug type. 
-```
-python3 bug_injection/inject_bugs.py <filename> <optional bug type>
-```
-Some supported bugtypes are: guarded_malloc_const, malloc_const, scanf_num 
 
 <br/>
 
@@ -95,6 +85,16 @@ gcc cfile_examples/nodeTreec_buggy.c -o cfile_examples/nodeTree_buggy.out
 >> user input: 123
 
 ```
+
+<br/>
+
+By default it tries to add all implemented bug types. 
+However, if you only want to inject specific bugs, there is an additional parameter that to specify which bug. 
+Currently we only support specifying 1 bug type. 
+```
+python3 bug_injection/inject_bugs.py <filename> <optional bug type>
+```
+Some supported bugtypes are: guarded_malloc_const, malloc_const, scanf_num, fgets_add
 
 <br/>
 

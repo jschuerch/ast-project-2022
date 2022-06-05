@@ -23,6 +23,7 @@ python3 bug_injection/ast_dump.py <filename>
 ```
 
 <br/>
+<br/>
 
 Here are some examples of injecting bugs into programs.
 
@@ -86,6 +87,7 @@ gcc cfile_examples/nodeTreec_buggy.c -o cfile_examples/nodeTree_buggy.out
 
 ```
 
+<br/>
 <br/>
 
 By default it tries to add all implemented bug types. 

@@ -58,11 +58,11 @@ Aborted
 python3 bug_injection/inject_bugs.py cfile_examples/scanf.c
 
 # Trigger bug
-gcc bug_injection/scanf_buggy.c -o bug_injection/scanf_buggy.out
-./bug_injection/scanf_buggy.out bug_injection/in/b.txt 
+gcc cfile_examples/scanf_buggy.c -o cfile_examples/scanf_buggy.out
+./cfile_examples/scanf_buggy.out cfile_examples/in/b.txt 
 
 # Non-triggering input
-./bug_injection/scanf_buggy.out bug_injection/in/a.txt
+./cfile_examples/scanf_buggy.out cfile_examples/in/a.txt
 
 ```
 b.txt contains numbers

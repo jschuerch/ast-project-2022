@@ -126,6 +126,3 @@ The following programs need files as inputs:
 - 02_scanf
 
 <br/>
-
-## Additional Comments
-

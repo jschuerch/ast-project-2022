@@ -1,7 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+/*
+Creates a binary tree with a lot of pointers.
+
+The idea is to overwrite one of the pointers via a
+buffer-overflow to cause a segmentation fault.
+*/
+
 struct node;
+
 struct node
 {
   char buff[50];
@@ -9,6 +18,7 @@ struct node
   struct node *right;
   struct node *p;
 };
+
 int main(int arg, char **argv)
 {
   int depth = 0;

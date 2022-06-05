@@ -61,10 +61,6 @@ int main(int arg, char **argv)
                 ++count;
             }
         }
-
-        printf("\n");
-        printf("count: %d\n", count);
-        printf("\n");
     }
 
     printf("\n");

@@ -4,7 +4,6 @@ This is the repository for the project of the ETH course Automated Software Test
 
 1. [Bug injection](#bug-injection)
 2. [AFL++-evaluation](#afl-evaluation)
-2. [Additional Comments](#additional-comments)
 
 <br/>
 
